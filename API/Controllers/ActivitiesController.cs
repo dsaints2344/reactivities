@@ -3,30 +3,40 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
+using Application.Activities;
 
 namespace API.Controllers
 {
     public class ActivitiesController : BaseApiController
     {
-        private readonly DataContext _context;
-
-        public ActivitiesController(DataContext context)
-        {
-            _context = context;
-        }
 
         //GET: api/activities/
         [HttpGet]
-        public async Task<ActionResult<List<Activity>>> GetActivities(){
-            return await _context.Activities.ToListAsync();
+        public async Task<ActionResult<List<Activity>>> GetActivities()
+        {
+            return await Mediator.Send(new List.Query());
         }
 
         // GET: api/activities/id:
         [HttpGet("{id}")]
-        public async Task<ActionResult<Activity>> GetActivity(Guid id){
-            return await _context.Activities.FindAsync(id);
+        public async Task<ActionResult<Activity>> GetActivity(Guid id)
+        {
+            return await Mediator.Send(new Details.Query{Id = id});
+        }
+
+        // POST: api/activites/
+        [HttpPost]
+        public async Task<IActionResult> CreateActivity(Activity activity){
+
+            return Ok(await Mediator.Send(new Create.Command {Activity = activity}));
+        }
+
+        //PUT: api/activities/id:
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditActivity(Guid id, Activity activity){
+
+            activity.Id = id;
+            return Ok(await Mediator.Send(new Edit.Command{Activity = activity}));
         }
     }
 }
