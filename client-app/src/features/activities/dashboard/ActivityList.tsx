@@ -4,6 +4,7 @@ import { Activity } from '../../../app/models/activity'
 
 interface Props{
     activities: Activity[]
+    selectActivity: (id: string) => void
 }
 const ActivityList: React.FC<Props> = (props) => {
     return(
@@ -19,7 +20,7 @@ const ActivityList: React.FC<Props> = (props) => {
                                 <div>{activity.city}, {activity.venue}</div>
                             </Item.Description>
                             <Item.Extra>
-                                <Button floated='right' content='View' color="blue"/>
+                                <Button onClick={() => props.selectActivity(activity.id)} floated='right' content='View' color="blue"/>
                                 <Label basic content={activity.category}/>
                             </Item.Extra>
                         </Item.Content>
