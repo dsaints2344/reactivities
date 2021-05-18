@@ -7,6 +7,7 @@ import {v4 as uuid} from 'uuid';
 import agent from "../api/agent";
 import LoadingComponent from "./LoadingComponent";
 import { useStore } from "../stores/store";
+import { observer } from "mobx-react-lite";
 
 function App() {
   const {activityStore} = useStore()
@@ -16,20 +17,11 @@ function App() {
   >(undefined);
 
   const [editMode, setEditMode] = useState(false);
-  const [loading, setLoading] = useState(true);
   const[submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    agent.Activities.list().then(response => {
-      let activities: Activity[] = []
-      response.forEach(activity => {
-        activity.date = activity.date.split('T')[0]
-        activities.push(activity)
-      })
-      setActivities(response)
-      setLoading(false) 
-    })
-  }, []);
+    activityStore.loadActivities();
+  }, [activityStore]);
 
   const handleSelectActivity = (id: string) => {
     setSelectedActivity(activities.find((x) => x.id === id));
@@ -77,15 +69,14 @@ function App() {
     
   }
 
-  if (loading) return <LoadingComponent content= 'Loading app'/>
+  if (activityStore.loadingInitial) return <LoadingComponent content= 'Loading app'/>
 
   return (
     <>
       <NavBar openForm={handleFormOpen}/>
       <Container style={{ marginTop: "7em" }}>
-        <h2>{activityStore.title}</h2>
         <ActivityDashboard
-          activities={activities}
+          activities={activityStore.acitivities}
           cancelSelectActivity={handleCancelActivity}
           selectActivity={handleSelectActivity}
           selectedActivity={selectedActivity}
@@ -101,4 +92,4 @@ function App() {
   );
 }
 
-export default App;
+export default observer(App);
