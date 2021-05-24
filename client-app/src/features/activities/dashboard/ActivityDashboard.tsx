@@ -9,7 +9,6 @@ import ActivityList from "./ActivityList";
 
 interface Props {
     activities: Activity[];
-    createOrEdit: (activity: Activity) => void;
     deleteActivity: (id: string) => void;
     submitting: boolean;
 }
@@ -31,10 +30,7 @@ const ActivityDashboard: React.FC<Props> = (props) => {
                     <ActivityDetails/>
                 )}
                 {editMode && (
-                    <ActivityForm
-                        createOrEdit={props.createOrEdit}
-                        submitting={props.submitting}
-                    />
+                    <ActivityForm/>
                 )}
             </Grid.Column>
         </Grid>

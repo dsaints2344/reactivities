@@ -77,11 +77,16 @@ export default class ActivityStore {
             await agent.Activities.update(activity)
 
             runInAction(() => {
-                this.acitivities.filter(a => a.id !== activity.id)
-                this.acitivities.push(activity)
+                this.acitivities = [...this.acitivities.filter(a => a.id !== activity.id)];
+                this.selectedActivity = activity;
+                this.editMode = false;
+                this.loading = false;
             })
         } catch (error) {
             console.log(error)
+            runInAction(() => {
+                this.loading = false;
+            })
         }
     }
 

@@ -23,25 +23,6 @@ function App() {
     activityStore.loadActivities();
   }, [activityStore]);
 
-  const handleCreateOrEditActivity = (activity: Activity) => {
-    setSubmitting(true)
-    if (activity.id) {
-      agent.Activities.update(activity).then(() => {
-        setActivities([...activities.filter(x => x.id !== activity.id), activity])
-        setSelectedActivity(activity)
-        setEditMode(false)
-        setSubmitting(false)
-      })
-    } else {
-      activity.id = uuid();
-      agent.Activities.create(activity).then(() => {
-        setActivities([...activities, activity])
-        setSelectedActivity(activity)
-        setEditMode(false)
-        setSubmitting(false)
-      })
-    }
-  }
 
   const handleDeleteActivity = (id: string) => {
     setSubmitting(true);
@@ -60,7 +41,6 @@ function App() {
       <Container style={{ marginTop: "7em" }}>
         <ActivityDashboard
           activities={activityStore.acitivities}
-          createOrEdit={handleCreateOrEditActivity}
           deleteActivity= {handleDeleteActivity}
           submitting={submitting}
         />
