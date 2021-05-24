@@ -1,11 +1,10 @@
 import { observer } from 'mobx-react-lite'
 import React, { useState } from 'react'
 import {Form, Segment, Button} from 'semantic-ui-react'
-import { Activity } from '../../../app/models/activity'
 import { useStore } from '../../../app/stores/store'
 
 
-const ActivityForm: React.FC<any> = (props) => {
+const ActivityForm  = () => {
     const {activityStore} = useStore();
     const {selectedActivity, closeForm, createActivity, updateActivity, loading} = activityStore;
 
