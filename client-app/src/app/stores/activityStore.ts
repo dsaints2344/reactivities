@@ -1,10 +1,10 @@
-import { makeAutoObservable } from "mobx"
+import { makeAutoObservable, runInAction } from "mobx"
 import agent from "../api/agent";
 import { Activity } from "../models/activity"
-
+import {v4 as uuid} from 'uuid'
 export default class ActivityStore {
     acitivities: Activity[] = [];
-    selectedActivity: Activity | null = null;
+    selectedActivity: Activity | undefined = undefined;
     editMode = false;
     loading = false;
     loadingInitial = false;
@@ -32,6 +32,57 @@ export default class ActivityStore {
 
     setLoadingInitial = (state: boolean) => {
         this.loadingInitial = state;
+    }
+
+    selectActivity = (id: string) => {
+        this.selectedActivity = this.acitivities.find(a => a.id === id);
+    }
+
+    cancelSelectedActivity = () => {
+        this.selectedActivity = undefined;
+    }
+
+    openForm = (id?: string) => {
+        id ? this.selectActivity(id) : this.cancelSelectedActivity();
+        this.editMode = true;
+    }
+
+    closeForm = () =>{
+        this.editMode = false;
+    }
+
+    createActivity = async (activity: Activity) => {
+        this.loading = true;
+        activity.id = uuid();
+
+        try {
+            await agent.Activities.create(activity);
+            runInAction(() => {
+                this.acitivities.push(activity)
+                this.selectedActivity = activity
+                this.editMode = false
+                this.loading = false
+            })
+        } catch (error) {
+            console.log(error)
+            runInAction(() => {
+                this.loading = false
+            })
+        }
+    }
+
+    updateActivity = async(activity: Activity) => {
+        this.loading = true;
+        try {
+            await agent.Activities.update(activity)
+
+            runInAction(() => {
+                this.acitivities.filter(a => a.id !== activity.id)
+                this.acitivities.push(activity)
+            })
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     
