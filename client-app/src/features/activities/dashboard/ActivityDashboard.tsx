@@ -1,46 +1,37 @@
+import { observer } from "mobx-react-lite";
 import React from "react";
 import { Grid } from "semantic-ui-react";
 import { Activity } from "../../../app/models/activity";
+import { useStore } from "../../../app/stores/store";
 import ActivityDetails from "../details/ActivityDetails";
 import ActivityForm from "../form/ActivityForm";
 import ActivityList from "./ActivityList";
 
 interface Props {
     activities: Activity[];
-    selectedActivity: Activity | undefined;
-    selectActivity: (id: string) => void;
-    cancelSelectActivity: () => void;
-    editMode: boolean;
-    openForm: (id: string) => void;
-    closeForm: () => void;
     createOrEdit: (activity: Activity) => void;
     deleteActivity: (id: string) => void;
     submitting: boolean;
 }
 
 const ActivityDashboard: React.FC<Props> = (props) => {
+    const {activityStore} = useStore()
+    const {selectedActivity, editMode} = activityStore
     return (
         <Grid>
             <Grid.Column width="10">
                 <ActivityList
-                    activities={props.activities}
-                    selectActivity={props.selectActivity}
                     deleteActivity={props.deleteActivity}
+                    activities={props.activities}
                     submitting={props.submitting}
                 />
             </Grid.Column>
             <Grid.Column width="6">
-                {props.selectedActivity && !props.editMode && (
-                    <ActivityDetails
-                        activity={props.selectedActivity}
-                        cancelSelectActivity={props.cancelSelectActivity}
-                        openForm={props.openForm}
-                    />
+                {selectedActivity && !editMode && (
+                    <ActivityDetails/>
                 )}
-                {props.editMode && (
+                {editMode && (
                     <ActivityForm
-                        closeForm={props.closeForm}
-                        activity={props.selectedActivity}
                         createOrEdit={props.createOrEdit}
                         submitting={props.submitting}
                     />
@@ -50,4 +41,4 @@ const ActivityDashboard: React.FC<Props> = (props) => {
     );
 };
 
-export default ActivityDashboard;
+export default observer(ActivityDashboard);

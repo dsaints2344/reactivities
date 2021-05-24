@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Button, Item, Label, Segment } from "semantic-ui-react";
 import { Activity } from "../../../app/models/activity";
+import { useStore } from "../../../app/stores/store";
 
 interface Props {
     activities: Activity[];
-    selectActivity: (id: string) => void;
     deleteActivity: (id: string) => void;
     submitting: boolean;
 }
@@ -15,6 +15,8 @@ const ActivityList: React.FC<Props> = (props) => {
         setTarget(e.currentTarget.name)
         props.deleteActivity(id)
     }
+    
+    const {activityStore} = useStore();
     return (
         <Segment>
             <Item.Group divided>
@@ -31,7 +33,7 @@ const ActivityList: React.FC<Props> = (props) => {
                             </Item.Description>
                             <Item.Extra>
                                 <Button
-                                    onClick={() => props.selectActivity(activity.id)}
+                                    onClick={() => activityStore.selectActivity(activity.id)}
                                     floated="right"
                                     content="View"
                                     color="blue"
