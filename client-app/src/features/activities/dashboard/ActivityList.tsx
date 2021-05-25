@@ -32,7 +32,6 @@ const ActivityList = () => {
                             </Item.Description>
                             <Item.Extra>
                                 <Button
-                                    onClick={() => activityStore.selectActivity(activity.id)}
                                     as={Link}
                                     to={`/activities/${activity.id}`}
                                     floated="right"
