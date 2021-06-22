@@ -1,12 +1,12 @@
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router";
-import { Segment, Button, Label, Header } from "semantic-ui-react";
+import { Segment, Button, Header } from "semantic-ui-react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { useStore } from "../../../app/stores/store";
 import { v4 as uuid } from "uuid";
 import { Link } from "react-router-dom";
-import { Formik, Form, ErrorMessage } from "formik";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import MyTextInput from "../../../app/common/form/MyTextInput";
 import MytextArea from "../../../app/common/form/MyTextArea";
