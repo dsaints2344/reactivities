@@ -11,8 +11,27 @@ import { ToastContainer } from "react-toastify";
 import NotFound from "../../features/NotFound";
 import ServerError from "../../features/errors/ServerError"
 import LoginForm from "../../features/users/LoginForm";
+import { useLocation } from "react-router-dom";
+import { useStore } from "../stores/store";
+import {useEffect} from 'react';
+import LoadingComponent from "./LoadingComponent";
 
 function App() {
+  const location = useLocation();
+  const {commonStore, userStore} = useStore();
+  
+  useEffect(() => {
+    if (commonStore.token) {
+      userStore.getUser().finally(() => commonStore.setAppLoaded());
+    } else {
+      commonStore.setAppLoaded();
+    }
+    
+  }, [commonStore, userStore]);
+
+  if (!commonStore.setAppLoaded) {
+    return <LoadingComponent content='Loading...'/>
+  }
   return (
     <>
       <ToastContainer position='bottom-right' hideProgressBar />
