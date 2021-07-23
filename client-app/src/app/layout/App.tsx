@@ -11,13 +11,12 @@ import { ToastContainer } from "react-toastify";
 import NotFound from "../../features/NotFound";
 import ServerError from "../../features/errors/ServerError"
 import LoginForm from "../../features/users/LoginForm";
-import { useLocation } from "react-router-dom";
 import { useStore } from "../stores/store";
 import {useEffect} from 'react';
 import LoadingComponent from "./LoadingComponent";
+import ModalContainer from "../common/modals/ModalContainer";
 
 function App() {
-  const location = useLocation();
   const {commonStore, userStore} = useStore();
   
   useEffect(() => {
@@ -35,6 +34,7 @@ function App() {
   return (
     <>
       <ToastContainer position='bottom-right' hideProgressBar />
+      <ModalContainer/>
       <Route exact path='/' component={HomePage} />
       <Route path={('/(.+)')} render={() => (
         <>
