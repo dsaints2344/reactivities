@@ -4,10 +4,10 @@ using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Application.Activities;
 using Microsoft.AspNetCore.Authorization;
+using Application;
 
 namespace API.Controllers
 {
-    [AllowAnonymous]
     public class ActivitiesController : BaseApiController
     {
 
@@ -33,6 +33,7 @@ namespace API.Controllers
         }
 
         //PUT: api/activities/id:
+        [Authorize(Policy = "IsActivityHost")]
         [HttpPut("{id}")]
         public async Task<IActionResult> EditActivity(Guid id, Activity activity){
 
@@ -41,10 +42,18 @@ namespace API.Controllers
         }
 
         //DELETE: api/activities/id
+        [Authorize(Policy = "IsActivityHost")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteActivity(Guid id){
 
             return HandleResult(await Mediator.Send(new Delete.Command{Id = id}));
+        }
+
+        //UPDATE attendance: api/activities/attend
+        [HttpPost("{id}/attend")]
+        public async Task<IActionResult> Attend(Guid id){
+
+            return HandleResult(await Mediator.Send(new UpdateAttendance.Command{Id = id}));
         }
     }
 }
