@@ -5,25 +5,40 @@ import { Button, Icon, Item, Label, Segment } from "semantic-ui-react";
 import { Activity } from "../../../app/models/activity";
 import ActivityListItemAttendee from "./ActivityListItemAttendee";
 
-
 interface Props {
     activity: Activity;
 }
 
 const ActivityItemList = ({ activity }: Props) => {
-
     return (
         <Segment.Group>
             <Segment>
-                {activity.isCancelled && <Label attached='top' color="red" content="Cancelled" style={{textAlign: 'center'}}/>}
+                {activity.isCancelled && (
+                    <Label
+                        attached="top"
+                        color="red"
+                        content="Cancelled"
+                        style={{ textAlign: "center" }}
+                    />
+                )}
                 <Item.Group>
                     <Item>
-                        <Item.Image style={{marginBottom: "30"}} size="tiny" circular src="/assets/user.png" />
+                        <Item.Image
+                            style={{ marginBottom: "30" }}
+                            size="tiny"
+                            circular
+                            src={activity.host?.image || "/assets/user.png"}
+                        />
                         <Item.Content>
                             <Item.Header as={Link} to={`/activities/${activity.id}`}>
                                 {activity.title}
                             </Item.Header>
-                            <Item.Description>Hosted by {activity.host?.displayName}</Item.Description>
+                            <Item.Description>
+                                Hosted by{" "}
+                                <Link to={`/profiles/${activity.host?.displayName}`}>
+                                    {activity.host?.displayName}
+                                </Link>
+                            </Item.Description>
                             {activity.isHost && (
                                 <Item.Description>
                                     <Label basic color="orange">
@@ -44,16 +59,22 @@ const ActivityItemList = ({ activity }: Props) => {
             </Segment>
             <Segment>
                 <span>
-                    <Icon name='clock' /> {format(activity.date!, 'dd MMMm yyyy h:mm aa')}
-                    <Icon name='marker' /> {activity.venue}
+                    <Icon name="clock" /> {format(activity.date!, "dd MMMm yyyy h:mm aa")}
+                    <Icon name="marker" /> {activity.venue}
                 </span>
             </Segment>
             <Segment secondary>
-                <ActivityListItemAttendee attendees={activity.attendees!}/>
-        </Segment>
+                <ActivityListItemAttendee attendees={activity.attendees!} />
+            </Segment>
             <Segment clearing>
                 <span>{activity.description}</span>
-                <Button as={Link} to={`/activities/${activity.id}`} color='teal' floated='right' content='View' />
+                <Button
+                    as={Link}
+                    to={`/activities/${activity.id}`}
+                    color="teal"
+                    floated="right"
+                    content="View"
+                />
             </Segment>
         </Segment.Group>
     );
