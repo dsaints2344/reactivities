@@ -8,21 +8,24 @@ import ProfileContent from './ProfileContent';
 import ProfileHeader from './ProfileHeader';
 
 const ProfilePage = () => {
-    const {username} = useParams<{username: string}>();
-    const {profileStore} = useStore();
-    const {loadProfile, loadingProfile, profile} = profileStore;
+    const { username } = useParams<{ username: string }>();
+    const { profileStore } = useStore();
+    const { loadProfile, loadingProfile, profile } = profileStore;
 
     useEffect(() => {
         loadProfile(username);
     }, [loadProfile, username])
 
-    if (loadingProfile) return <LoadingComponent content='Loading profile...'/>
+    if (loadingProfile) return <LoadingComponent content='Loading profile...' />
 
     return (
         <Grid>
             <Grid.Column width={16}>
-                {profile && <ProfileHeader profile={profile}/>}
-                <ProfileContent/>
+                {profile &&
+                    <>
+                        <ProfileHeader profile={profile} />
+                        <ProfileContent profile={profile} />
+                    </>}
             </Grid.Column>
         </Grid>
     )
