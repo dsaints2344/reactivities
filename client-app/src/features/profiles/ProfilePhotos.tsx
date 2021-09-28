@@ -18,10 +18,14 @@ interface Props {
 }
 
 const ProfilePhotos: React.FC<Props> = ({ profile }) => {
-    const [addPhoneMode, setAddPhotoMode] = useState<boolean>(false);
+    const [addPhotoMode, setAddPhotoMode] = useState<boolean>(false);
     const {
-        profileStore: { isCurrentUser },
+        profileStore: { isCurrentUser, uploadPhoto, uploading },
     } = useStore();
+
+    const handlePhotoUpload = (file: Blob) => {
+        uploadPhoto(file).then(() => setAddPhotoMode(false));
+    }
     return (
         <Tab.Pane>
             <Grid>
@@ -31,14 +35,14 @@ const ProfilePhotos: React.FC<Props> = ({ profile }) => {
                         <Button
                             floated="right"
                             basic
-                            content={addPhoneMode ? "Cancel" : "Add Poto"}
-                            onClick={() => setAddPhotoMode(!addPhoneMode)}
+                            content={addPhotoMode ? "Cancel" : "Add Poto"}
+                            onClick={() => setAddPhotoMode(!addPhotoMode)}
                         />
                     )}
                 </Grid.Column>
                 <GridColumn width={16}>
-                    {addPhoneMode ? (
-                        <PhotoUploadWidget/>
+                    {addPhotoMode ? (
+                        <PhotoUploadWidget uploadPhoto={handlePhotoUpload} loading={uploading}/>
                     ) : (
                         <Card.Group itemsPerRow={5}>
                             {profile.photos?.map((photo) => (
