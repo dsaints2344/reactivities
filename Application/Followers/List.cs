@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
+using Application.Interfaces;
 using Application.Profiles;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -24,8 +25,10 @@ namespace Application.Followers
         {
             private readonly DataContext _contex;
             private readonly IMapper _mapper;
-            public Handler(DataContext contex, IMapper mapper)
+            private readonly IUserAccessor _userAccessor;
+            public Handler(DataContext contex, IMapper mapper, IUserAccessor userAccessor)
             {
+                _userAccessor = userAccessor;
                 _mapper = mapper;
                 _contex = contex;
 
@@ -40,14 +43,16 @@ namespace Application.Followers
                     case "followers":
                         profiles = await _contex.UserFollowings.Where(x => x.Target.UserName == request.Username)
                             .Select(u => u.Observer)
-                            .ProjectTo<Profiles.Profile>(_mapper.ConfigurationProvider)
+                            .ProjectTo<Profiles.Profile>(_mapper.ConfigurationProvider, 
+                                new {currentUsername = _userAccessor.GetUsername()})
                             .ToListAsync();
                         break;
-                    
+
                     case "following":
                         profiles = await _contex.UserFollowings.Where(x => x.Observer.UserName == request.Username)
                             .Select(u => u.Target)
-                            .ProjectTo<Profiles.Profile>(_mapper.ConfigurationProvider)
+                            .ProjectTo<Profiles.Profile>(_mapper.ConfigurationProvider, 
+                                new {currentUsername = _userAccessor.GetUsername()})
                             .ToListAsync();
                         break;
                 }
