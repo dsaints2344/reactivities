@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
 import { Activity, ActivityFormValues } from "../models/activity";
-import { Pagination, PagingParamas } from "../models/pagination";
+import { Pagination, PagingParams } from "../models/pagination";
 import { Profile } from "../models/profile";
 import { store } from "./store";
 export default class ActivityStore {
@@ -12,13 +12,13 @@ export default class ActivityStore {
     loading = false;
     loadingInitial = false;
     pagination: Pagination | null = null;
-    pagingParams = new PagingParamas();
+    pagingParams = new PagingParams();
 
     constructor() {
         makeAutoObservable(this);
     }
 
-    setPagingParams = (pagingParams: PagingParamas) => {
+    setPagingParams = (pagingParams: PagingParams) => {
         this.pagingParams = pagingParams; 
     }
 

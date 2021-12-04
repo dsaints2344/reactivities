@@ -2,6 +2,7 @@ export interface Pagination {
     currentPage: number;
     itemsPerPage: number;
     totalItems: number;
+    totalPages: number;
 }
 
 export class PaginatedResults<T> {
@@ -14,7 +15,12 @@ export class PaginatedResults<T> {
     }
 }
 
-export class PagingParamas {
-    pageNumber = 1;
-    pageSize = 2;
+export class PagingParams {
+    pageNumber
+    pageSize
+
+    constructor(pageNumber = 1, pageSize = 2){
+        this.pageNumber = pageNumber;
+        this.pageSize = pageSize;
+    }
 }
