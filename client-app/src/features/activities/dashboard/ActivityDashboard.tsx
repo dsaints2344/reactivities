@@ -1,53 +1,61 @@
-import React from "react";
-import { Grid } from "semantic-ui-react";
-import { Activity } from "../../../app/models/activity";
-import ActivityDetails from "../details/ActivityDetails";
-import ActivityForm from "../form/ActivityForm";
+import { observer } from "mobx-react-lite";
+import { useEffect, useState } from "react";
+import InfiniteScroll from "react-infinite-scroller";
+import { Grid, Loader } from "semantic-ui-react";
+import { PagingParams } from "../../../app/models/pagination";
+import { useStore } from "../../../app/stores/store";
+import ActivityFilters from "./ActivityFilters";
 import ActivityList from "./ActivityList";
+import ActivityListItemPlaceholder from "./ActivityListItemPlaceholder";
 
-interface Props {
-    activities: Activity[];
-    selectedActivity: Activity | undefined;
-    selectActivity: (id: string) => void;
-    cancelSelectActivity: () => void;
-    editMode: boolean;
-    openForm: (id: string) => void;
-    closeForm: () => void;
-    createOrEdit: (activity: Activity) => void;
-    deleteActivity: (id: string) => void;
-    submitting: boolean;
-}
 
-const ActivityDashboard: React.FC<Props> = (props) => {
+const ActivityDashboard = () => {
+    const { activityStore } = useStore()
+    const { loadActivities, activityRegistry, setPagingParams, pagination } = activityStore;
+    const [loadingNext, setLoadingNext] = useState(false);
+
+    const handleGetNext = () => {
+        setLoadingNext(true);
+        setPagingParams(new PagingParams(pagination!.currentPage + 1));
+        loadActivities().then(() => setLoadingNext(false));
+    }
+
+    useEffect(() => {
+        if (activityRegistry.size === 0) loadActivities()
+    }, [activityRegistry.size, activityStore, loadActivities]);
+
+
     return (
         <Grid>
             <Grid.Column width="10">
-                <ActivityList
-                    activities={props.activities}
-                    selectActivity={props.selectActivity}
-                    deleteActivity={props.deleteActivity}
-                    submitting={props.submitting}
-                />
+                {activityStore.loadingInitial && !loadingNext ? (
+                    <>
+                        <ActivityListItemPlaceholder />
+                        <ActivityListItemPlaceholder />
+                    </>
+                ) : (
+                    <InfiniteScroll
+                        pageStart={0}
+                        loadMore={handleGetNext}
+                        hasMore={
+                            !loadingNext &&
+                            !!pagination &&
+                            pagination.currentPage < pagination.totalPages
+                        }
+                        initialLoad={false}
+                    >
+                        <ActivityList />
+                    </InfiniteScroll>
+                )}
             </Grid.Column>
             <Grid.Column width="6">
-                {props.selectedActivity && !props.editMode && (
-                    <ActivityDetails
-                        activity={props.selectedActivity}
-                        cancelSelectActivity={props.cancelSelectActivity}
-                        openForm={props.openForm}
-                    />
-                )}
-                {props.editMode && (
-                    <ActivityForm
-                        closeForm={props.closeForm}
-                        activity={props.selectedActivity}
-                        createOrEdit={props.createOrEdit}
-                        submitting={props.submitting}
-                    />
-                )}
+                <ActivityFilters />
+            </Grid.Column>
+            <Grid.Column width="10">
+                <Loader active={loadingNext} />
             </Grid.Column>
         </Grid>
     );
 };
 
-export default ActivityDashboard;
+export default observer(ActivityDashboard);
